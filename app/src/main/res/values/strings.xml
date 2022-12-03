@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Flickr Challenge</string>
+    <string name="search_image_title">Search Flickr Images</string>
+    <string name="search_button">Search</string>
+    <string name="search_result">Search result:</string>
+    <string name="search_field_label">Search images by tag</string>
+</resources>
