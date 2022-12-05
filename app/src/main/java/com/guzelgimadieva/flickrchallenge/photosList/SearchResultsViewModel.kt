@@ -1,7 +1,6 @@
 package com.guzelgimadieva.flickrchallenge.photosList
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guzelgimadieva.flickrchallenge.api.FlickrApiService
@@ -20,7 +19,7 @@ class SearchResultsViewModel(
 ) : ViewModel() {
     private var restInterface: FlickrApiService
 
-    private val _searchUiState = MutableStateFlow(SearchUiState(currentSelectedPhoto = null))
+    private val _searchUiState = MutableStateFlow(SearchUiState())
     val searchUiState: StateFlow<SearchUiState>
            = _searchUiState.asStateFlow()
 

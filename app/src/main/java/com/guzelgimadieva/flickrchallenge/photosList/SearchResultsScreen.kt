@@ -36,7 +36,8 @@ enum class SearchScreen() {
     Details
 }
 
-@Composable fun SearchResultsScreen(
+@Composable
+fun SearchResultsScreen(
     viewModel: SearchResultsViewModel = viewModel(),
     onCardClicked: (Item) -> Unit
 ) {
@@ -57,19 +58,19 @@ enum class SearchScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            searchQuery = searchScreenUiState.searchQuery,
+            searchQuery = searchScreenUiState.searchQuery ?: "",
             onUserSearchChanged = {
                 viewModel.updateUserSearch(it)
                 viewModel.getPhotos(it)
             })
 
         Spacer(modifier = Modifier.height(16.dp))
-         SearchResultGrid(
+        SearchResultGrid(
             modifier = Modifier.fillMaxWidth(),
             viewModel = viewModel,
-             onItemClicked = {
-                 onCardClicked(it)
-             }
+            onItemClicked = {
+                onCardClicked(it)
+            }
         )
     }
 }
@@ -118,7 +119,7 @@ fun SearchBar(
 fun SearchResultGrid(
     modifier: Modifier,
     viewModel: SearchResultsViewModel,
-    onItemClicked: (Item)-> Unit
+    onItemClicked: (Item) -> Unit
 ) {
     val searchScreenUiState by viewModel.searchUiState.collectAsState()
     Row(
@@ -134,24 +135,25 @@ fun SearchResultGrid(
     }
 
     val foundByTagItems = searchScreenUiState.listOfItems
-    if (foundByTagItems.isNotEmpty()) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.padding(8.dp)
-        ) {
-            items(foundByTagItems) { photo ->
+    if (searchScreenUiState.searchQuery != null) {
+        if (foundByTagItems.isNotEmpty()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = modifier.padding(8.dp)
+            ) {
+                items(foundByTagItems) { photo ->
                     PhotoCard(photo, modifier) {
                         onItemClicked(photo)
+                    }
                 }
             }
-        }
-    }
-        else    {
+        } else {
             RetrySection(error = "No results found!")
-        {
-            viewModel.getPhotos(searchScreenUiState.searchQuery)
+            {
+                viewModel.getPhotos(searchScreenUiState.searchQuery)
+            }
         }
     }
 
@@ -159,7 +161,7 @@ fun SearchResultGrid(
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun PhotoCard (
+fun PhotoCard(
     photoItem: Item,
     modifier: Modifier,
     onItemClick: () -> Unit
