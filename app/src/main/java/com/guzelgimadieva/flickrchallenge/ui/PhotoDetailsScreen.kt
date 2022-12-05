@@ -1,21 +1,15 @@
-package com.guzelgimadieva.flickrchallenge.photoDetailView
+package com.guzelgimadieva.flickrchallenge.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.guzelgimadieva.flickrchallenge.model.Item
-import com.guzelgimadieva.flickrchallenge.photosList.SearchResultsViewModel
-import com.guzelgimadieva.flickrchallenge.photosList.SearchUiState
 import com.guzelgimadieva.flickrchallenge.ui.theme.RobotoCondensed
 
 @OptIn(ExperimentalCoilApi::class)
@@ -45,9 +39,15 @@ fun PhotoDetailsScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(text = searchDetailUiState.currentSelectedPhoto.title)
-            Text(text = "Author:")
+            Text(text = "Author:",
+                fontFamily = RobotoCondensed,
+                fontSize = 20.sp,
+                modifier = Modifier.fillMaxWidth())
             Text(text = searchDetailUiState.currentSelectedPhoto.author)
-            Text(text = "Tags:")
+            Text(text = "Tags:",
+                fontFamily = RobotoCondensed,
+                fontSize = 20.sp,
+                modifier = Modifier.fillMaxWidth())
             Text(text = searchDetailUiState.currentSelectedPhoto.tags)
         }
     }

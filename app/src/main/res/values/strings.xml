@@ -4,4 +4,6 @@
     <string name="search_button">Search</string>
     <string name="search_result">Search result:</string>
     <string name="search_field_label">Search images by tag</string>
+    <string name="back_button">Back</string>
+    <string name="details_screen_title">Back</string>
 </resources>

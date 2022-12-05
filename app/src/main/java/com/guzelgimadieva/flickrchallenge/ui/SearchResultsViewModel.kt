@@ -1,6 +1,5 @@
-package com.guzelgimadieva.flickrchallenge.photosList
+package com.guzelgimadieva.flickrchallenge.ui
 
-import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guzelgimadieva.flickrchallenge.api.FlickrApiService
@@ -23,8 +22,6 @@ class SearchResultsViewModel(
     val searchUiState: StateFlow<SearchUiState>
            = _searchUiState.asStateFlow()
 
-    private var isLoading = mutableStateOf(false)
-
     private val errorHandler =
         CoroutineExceptionHandler { _, exception ->
             exception.printStackTrace()
@@ -41,7 +38,6 @@ class SearchResultsViewModel(
 
     fun getPhotos(tag: String?) {
         viewModelScope.launch(errorHandler) {
-            isLoading.value = true
             if (tag != null) {
                 _searchUiState.update { currentState ->
                     currentState.copy(listOfItems = getRemotePhotos(tag).items)
@@ -52,6 +48,7 @@ class SearchResultsViewModel(
 
     private suspend fun getRemotePhotos(tag:String): FlickrPhotos{
         return withContext(Dispatchers.IO){
+            delay(500)
             restInterface.getPhotos(tag)
         }
     }

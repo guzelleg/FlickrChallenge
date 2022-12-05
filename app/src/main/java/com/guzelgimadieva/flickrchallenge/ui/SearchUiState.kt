@@ -1,4 +1,4 @@
-package com.guzelgimadieva.flickrchallenge.photosList
+package com.guzelgimadieva.flickrchallenge.ui
 
 import com.guzelgimadieva.flickrchallenge.model.Item
 

@@ -1,5 +1,6 @@
-package com.guzelgimadieva.flickrchallenge.photosList
+package com.guzelgimadieva.flickrchallenge.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,10 +31,11 @@ import coil.compose.rememberImagePainter
 import com.guzelgimadieva.flickrchallenge.R
 import com.guzelgimadieva.flickrchallenge.model.Item
 import com.guzelgimadieva.flickrchallenge.ui.theme.RobotoCondensed
+import java.util.*
 
-enum class SearchScreen() {
-    Start,
-    Details
+enum class SearchScreen(@StringRes val title: Int) {
+    Start (title = R.string.app_name),
+    Details (title = R.string.details_screen_title)
 }
 
 @Composable
