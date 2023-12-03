@@ -1,8 +1,8 @@
 package com.guzelgimadieva.flickrchallenge.model
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 data class Media(
-    @SerializedName("m")
-    val size_m_url: String
+    @Json(name = "m")
+    val mSizeUrl: String
 )

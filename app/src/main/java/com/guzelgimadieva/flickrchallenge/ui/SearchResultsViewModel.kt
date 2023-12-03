@@ -2,68 +2,69 @@ package com.guzelgimadieva.flickrchallenge.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.guzelgimadieva.flickrchallenge.api.FlickrApiService
-import com.guzelgimadieva.flickrchallenge.model.FlickrPhotos
+import com.guzelgimadieva.flickrchallenge.api.FlickrAPI
+import com.guzelgimadieva.flickrchallenge.di.AppModule
 import com.guzelgimadieva.flickrchallenge.model.Item
-import com.guzelgimadieva.flickrchallenge.utils.Constants
-import kotlinx.coroutines.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
 
-class SearchResultsViewModel(
+@HiltViewModel
+class SearchResultsViewModel @Inject constructor(
+    private val restInterface: FlickrAPI = AppModule.provideFlickrApi()
 ) : ViewModel() {
-    private var restInterface: FlickrApiService
 
     private val _searchUiState = MutableStateFlow(SearchUiState())
-    val searchUiState: StateFlow<SearchUiState>
-           = _searchUiState.asStateFlow()
+    val searchUiState: StateFlow<SearchUiState> = _searchUiState.asStateFlow()
 
-    private val errorHandler =
-        CoroutineExceptionHandler { _, exception ->
-            exception.printStackTrace()
-        }
+    private val _searchQueryState = MutableStateFlow(String())
+    val searchQueryState: StateFlow<String> = _searchQueryState.asStateFlow()
 
     init {
-        val retrofit: Retrofit =
-            Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        restInterface = retrofit.create(FlickrApiService::class.java)
-    }
-
-    fun getPhotos(tag: String?) {
-        viewModelScope.launch(errorHandler) {
-            if (tag != null) {
-                _searchUiState.update { currentState ->
-                    currentState.copy(listOfItems = getRemotePhotos(tag).items)
+        _searchQueryState
+            .debounce(500L)
+            .onEach {
+                try {
+                    _searchUiState.update { currentState ->
+                        currentState.copy(listOfItems = getPhotos(it))
+                    }
+                } catch (t: Throwable) {
+                    Timber.w(t, "error getting images")
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
-    private suspend fun getRemotePhotos(tag:String): FlickrPhotos{
-        return withContext(Dispatchers.IO){
-            delay(500)
-            restInterface.getPhotos(tag)
-        }
-    }
-
-    fun updateUserSearch(searchTerm: String) {
-        _searchUiState.update { currentState ->
-            currentState.copy(searchQuery = searchTerm)
-        }
-    }
-
-    fun setSelectedPhoto(selectedPhoto: Item?) {
-        if (selectedPhoto != null) {
+    fun updateSearch(s: CharSequence) {
+        _searchQueryState.value = s.toString().trim()
+        if (searchQueryState.value.isEmpty()) {
             _searchUiState.update { currentState ->
-                currentState.copy(currentSelectedPhoto = selectedPhoto)
+                currentState.copy(listOfItems = listOf())
             }
+        }
+    }
+
+    private suspend fun getPhotos(tag: String): List<Item> {
+        return if (tag.isNotEmpty()) {
+            withContext(Dispatchers.IO)
+            {
+                restInterface.getPhotos(tag)
+            }.items
+        } else listOf()
+    }
+
+    fun setSelectedPhoto(selectedPhoto: Item) {
+        _searchUiState.update { currentState ->
+            currentState.copy(currentSelectedPhoto = selectedPhoto)
         }
     }
 }

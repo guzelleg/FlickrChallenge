@@ -6,4 +6,6 @@
     <string name="search_field_label">Search images by tag</string>
     <string name="back_button">Back</string>
     <string name="details_screen_title">Back</string>
+    <string name="empty_state_message">Your search result will be shown here</string>
+    <string name="no_results_message">No results found!</string>
 </resources>
